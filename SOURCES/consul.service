@@ -1,0 +1,21 @@
+[Unit]
+Description=Consul is service discovery and configuration made easy.
+Documentation=http://www.consul.io
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User=consul
+Group=consul
+LimitNOFILE=65536
+EnvironmentFile=-/etc/sysconfig/consul
+PermissionsStartOnly=true
+ExecStart=/usr/local/bin/consul agent $OPTIONS
+ExecStop=/usr/local/bin/consul leave
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
