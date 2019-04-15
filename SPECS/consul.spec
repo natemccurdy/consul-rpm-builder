@@ -17,9 +17,10 @@ License:        Mozilla Public License, version 2.0
 URL:            http://www.consul.io
 
 Source0:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
-%define         source0_sha256 d3bdf9817c7de9d83426d8c421eb3f37bf82c03c97860ef78fb56e148c4a9765
+Source1:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_SHA256SUMS
+Source2:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_SHA256SUMS.sig
 
-Source1:        %{name}.service
+Source3:        %{name}.service
 
 BuildRequires:  systemd-units
 
@@ -33,7 +34,8 @@ Consul is a tool for service discovery and configuration.
 Consul is distributed, highly available, and extremely scalable.
 
 %prep
-echo "%{source0_sha256} %{SOURCE0}" | sha256sum -c -
+gpg --verify %{SOURCE2} %{SOURCE1}
+echo $(awk '/linux_amd64/ {print $1}' %{SOURCE1}) %{SOURCE0} | sha256sum -c -
 
 %setup -q -c
 
@@ -46,7 +48,7 @@ echo "%{source0_sha256} %{SOURCE0}" | sha256sum -c -
 %{__install} -d -m 0755 %{buildroot}%{consul_bindir}
 
 ## sytem files
-%{__install} -p -D -m 0640 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
+%{__install} -p -D -m 0640 %{SOURCE3} %{buildroot}%{_unitdir}/%{name}.service
 
 ## main binary
 %{__install} -p -D -m 0755 %{name} %{buildroot}%{consul_bindir}/%{name}
