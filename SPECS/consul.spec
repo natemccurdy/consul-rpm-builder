@@ -35,7 +35,7 @@ Consul is distributed, highly available, and extremely scalable.
 
 %prep
 gpg --verify %{SOURCE2} %{SOURCE1}
-echo $(awk '/linux_amd64/ {print $1}' %{SOURCE1}) %{SOURCE0} | sha256sum -c -
+awk '/linux_amd64/ {print $1,"%{SOURCE0}"}' %{SOURCE1} | sha256sum -c -
 
 %setup -q -c
 
