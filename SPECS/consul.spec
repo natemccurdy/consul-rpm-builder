@@ -17,6 +17,8 @@ License:        Mozilla Public License, version 2.0
 URL:            http://www.consul.io
 
 Source0:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
+%define         source0_sha256 d3bdf9817c7de9d83426d8c421eb3f37bf82c03c97860ef78fb56e148c4a9765
+
 Source1:        %{name}.service
 
 BuildRequires:  systemd-units
@@ -31,6 +33,8 @@ Consul is a tool for service discovery and configuration.
 Consul is distributed, highly available, and extremely scalable.
 
 %prep
+echo "%{source0_sha256} %{SOURCE0}" | sha256sum -c -
+
 %setup -q -c
 
 %build
