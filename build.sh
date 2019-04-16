@@ -1,11 +1,12 @@
 #!/bin/bash
 set -ex
 
-: "${SOURCE:=/tmp/build}"
-: "${BUILDDIR:=/root/rpmbuild}"
+: "${ARTIFACTS:+}" # If ARTIFACTS exists, copy built RPMs to it.
+: "${BUILDDIR:=.}" # Use CWD as the default build dir
+: "${SOURCE:?}"    # SOURCE must be set via environment variables.
 
 # Create the build folders.
-rpmdev-setuptree
+mkdir -p ${BUILDDIR}/{SPECS,SOURCES,RPMS,SRPMS}
 
 # Link the specs.
 ln -sf "${SOURCE}"/SPECS/*.spec "${BUILDDIR}/SPECS"
@@ -19,11 +20,14 @@ gpg --keyserver hkp://keys.gnupg.net --recv-keys 51852D87348FFC4C
 
 # Download any Source's mentioned in the specs.
 for spec in "${BUILDDIR}"/SPECS/*.spec; do
-  spectool -g -R "$spec"
+  spectool -g -C "${BUILDDIR}/SOURCES" "$spec"
 done
 
 # Build the source and binary RPM packages.
-rpmbuild -ba "${BUILDDIR}"/SPECS/*.spec
+rpmbuild -ba "${BUILDDIR}"/SPECS/*.spec --define "_topdir $BUILDDIR"
 
-# Copy the RPM's to the mounted volume and out of the container.
-cp -v -r -f "${BUILDDIR}/RPMS" "${BUILDDIR}/SRPMS" /tmp/artifacts/
+if [[ -n $ARTIFACTS ]]; then
+  [[ -d $ARTIFACTS ]] || mkdir -p "$ARTIFACTS"
+  # Copy the RPM's to the mounted volume and out of the container.
+  cp -v -r -f "${BUILDDIR}/RPMS" "${BUILDDIR}/SRPMS" "$ARTIFACTS"
+fi

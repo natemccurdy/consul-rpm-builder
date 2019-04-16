@@ -1,16 +1,18 @@
 FROM centos:7
 
-VOLUME ["/tmp/artifacts"]
-
 RUN yum install -y \
       rpmdevtools \
-      rpm-devel \
     && yum clean all \
-    && rm -rf /var/cache/yum \
-    && mkdir /root/rpmbuild
+    && rm -rf /var/cache/yum
 
-COPY . /tmp/build
+ENV     BUILDDIR /root/rpmbuild
+RUN     mkdir $BUILDDIR
+WORKDIR $BUILDDIR
 
-WORKDIR /root/rpmbuild
+ENV    ARTIFACTS /tmp/artifacts
+VOLUME [$ARTIFACTS]
 
-CMD ["/tmp/build/build.sh"]
+ENV  SOURCE /tmp/build
+COPY . $SOURCE
+
+CMD ["bash", "-c", "${SOURCE}/build.sh"]
