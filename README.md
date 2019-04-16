@@ -31,7 +31,7 @@ An RPM and source RPM will be created in the `artifacts/` folder:
 
 ## Configuring
 
-Config files are loaded in lexicographical order from the `config-dir` specified in `/etc/sysconfig/consul` (config package).
+Config files are loaded in lexicographical order from the `config-dir` (defaults to `/etc/consul/`).
 
 # Inspired By
 
