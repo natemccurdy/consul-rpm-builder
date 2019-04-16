@@ -4,6 +4,7 @@ set -ex
 : "${ARTIFACTS:+}" # If ARTIFACTS exists, copy built RPMs to it.
 : "${BUILDDIR:=.}" # Use CWD as the default build dir
 : "${SOURCE:?}"    # SOURCE must be set via environment variables.
+: "${HASHI_PUB_KEY_ID:=51852D87348FFC4C}"
 
 # Create the build folders.
 mkdir -p ${BUILDDIR}/{SPECS,SOURCES,RPMS,SRPMS}
@@ -16,7 +17,7 @@ ln -sf "${SOURCE}"/SOURCES/* "${BUILDDIR}/SOURCES"
 
 # Get the Hashicorp public signing key
 # https://www.hashicorp.com/security
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 51852D87348FFC4C
+gpg --keyserver hkp://keys.gnupg.net --recv-keys "$HASHI_PUB_KEY_ID"
 
 # Download any Source's mentioned in the specs.
 for spec in "${BUILDDIR}"/SPECS/*.spec; do
