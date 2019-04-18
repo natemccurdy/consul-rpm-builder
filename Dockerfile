@@ -15,4 +15,6 @@ VOLUME [$ARTIFACTS]
 ENV  SOURCE /tmp/build
 COPY . $SOURCE
 
+ENV SPEC_FILE all
+
 CMD ["bash", "-c", "${SOURCE}/build.sh"]

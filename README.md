@@ -2,13 +2,19 @@
 
 Want a Consul RPM for CentOS? Great, that's what this project will give you!
 
+The spec files in this project can generate:
+* consul 1.4.4
+* consul-template 0.20.0
+
 # Building
 
 All the build steps are handled by `make` in a [Makefile](Makefile).
 
-The default make target will build a docker image with an RPM-build environment (based on [centos:7](https://hub.docker.com/_/centos)) then run a [build](build.sh) script to generate the RPM.
+The default make target will build a docker image (based on [centos:7](https://hub.docker.com/_/centos)) then run the [build](build.sh) script to generate the RPMs.
 
 ## Quick Start
+
+Make all RPMS:
 
 ```bash
 git clone https://github.com/natemccurdy/consul-rpm-builder.git
@@ -16,22 +22,43 @@ cd consul-rpm-builder
 make
 ```
 
+Make just the Consul RPM:
+```bash
+make consul
+```
+
+Make just the Consul Template RPM:
+```bash
+make consul-template
+```
+
 ## Result
 
-An RPM and source RPM will be created in the `artifacts/` folder:
-1. `RPMS/x86_64/consul-<version>-<release>.rpm` - The main RPM
-1. `SRPMS/consul-<version><release>.src.rpm` - The source RPM
+RPM's and source RPM's will be made in the `artifacts/` folder (created by the build process):
+* `RPMS/x86_64/consul-<version>-<release>.rpm`
+* `SRPMS/consul-<version><release>.src.rpm`
+* `RPMS/x86_64/consul-template-<version>-<release>.rpm`
+* `SRPMS/consul-template-<version><release>.src.rpm`
 
 # Running
 
+Consul:
 1. Install the RPM
 2. Add configs to `/etc/consul/*`
 3. Start the service and tail the logs: `systemctl start consul.service` and `journalctl -f --no-pager -u consul`
 4. Optionally start on reboot with: `systemctl enable consul.service`
 
+Consul Template:
+1. Install the RPM
+2. Add configs to `/etc/consul-template/`
+3. Start the service and tail the logs: `systemctl start consul-template.service` and `journalctl -f --no-pager -u consul`
+4. Optionally start on reboot with: `systemctl enable consul-template.service`
+
 ## Configuring
 
-Config files are loaded in lexicographical order from the `config-dir` (defaults to `/etc/consul/`).
+Config files are loaded in lexicographical order from the `config-dir`.
+* Consul - `/etc/consul/`
+* Consul Template - `/etc/consul-template/`
 
 # Inspired By
 

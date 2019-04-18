@@ -1,16 +1,21 @@
 #!/bin/bash
 set -ex
 
-: "${ARTIFACTS:+}" # If ARTIFACTS exists, copy built RPMs to it.
-: "${BUILDDIR:=.}" # Use CWD as the default build dir
-: "${SOURCE:?}"    # SOURCE must be set via environment variables.
+: "${ARTIFACTS:+}"    # If ARTIFACTS exists, copy built RPMs to it.
+: "${BUILDDIR:=.}"    # Use CWD as the default build dir
+: "${SOURCE:?}"       # SOURCE must be set via environment variables.
+: "${SPEC_FILE:=all}" # Which spec file to process. Will do all specs if unset.
 : "${HASHI_PUB_KEY_ID:=51852D87348FFC4C}"
 
 # Create the build folders.
 mkdir -p ${BUILDDIR}/{SPECS,SOURCES,RPMS,SRPMS}
 
 # Link the specs.
-ln -sf "${SOURCE}"/SPECS/*.spec "${BUILDDIR}/SPECS"
+if [[ $SPEC_FILE == all ]]; then
+  ln -sf "${SOURCE}"/SPECS/*.spec "${BUILDDIR}/SPECS"
+else
+  ln -sf "${SOURCE}"/SPECS/"${SPEC_FILE}".spec "${BUILDDIR}/SPECS"
+fi
 
 # Link the sources.
 ln -sf "${SOURCE}"/SOURCES/* "${BUILDDIR}/SOURCES"

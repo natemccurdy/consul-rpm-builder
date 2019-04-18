@@ -1,20 +1,17 @@
 ## package settings
-%define consul_user    consul
-%define consul_group   %{consul_user}
-%define consul_home    /opt/consul
-%define consul_datadir %{consul_home}/data
-%define consul_bindir  %{consul_home}/bin
-%define consul_confdir /etc/consul
+%define consul_template_home    /opt/consul
+%define consul_template_bindir  %{consul_template_home}/bin
+%define consul_template_confdir /etc/consul-template
 %define debug_package  %{nil}
 
-Name:           consul
-Version:        1.4.4
+Name:           consul-template
+Version:        0.20.0
 Release:        0%{?dist}
-Summary:        Service discovery and configuration made easy.
+Summary:        Consul Template provides a convenient way to populate values from Consul into the filesystem.
 
 Group:          System Environment/Daemons
 License:        Mozilla Public License, version 2.0
-URL:            http://www.consul.io
+URL:            https://github.com/hashicorp/consul-template
 
 Source0:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
 Source1:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_SHA256SUMS
@@ -30,8 +27,10 @@ Requires(preun):    systemd
 Requires(postun):   systemd
 
 %description
-Consul is a tool for service discovery and configuration.
-Consul is distributed, highly available, and extremely scalable.
+The daemon consul-template queries a Consul instance and updates
+any number of specified templates on the filesystem.
+As an added bonus, consul-template can optionally run arbitrary
+commands when the update process completes.
 
 %prep
 gpg --verify %{SOURCE2} %{SOURCE1}
@@ -43,28 +42,20 @@ awk '/linux_amd64.zip/ {print $1,"%{SOURCE0}"}' %{SOURCE1} | sha256sum -c -
 
 %install
 ## directories
-%{__install} -d -m 0755 %{buildroot}%{consul_confdir}
-%{__install} -d -m 0750 %{buildroot}%{consul_datadir}
-%{__install} -d -m 0755 %{buildroot}%{consul_bindir}
+%{__install} -d -m 0755 %{buildroot}%{consul_template_confdir}
+%{__install} -d -m 0755 %{buildroot}%{consul_template_bindir}
 
 ## sytem files
 %{__install} -p -D -m 0640 %{SOURCE3} %{buildroot}%{_unitdir}/%{name}.service
 
 ## main binary
-%{__install} -p -D -m 0755 %{name} %{buildroot}%{consul_bindir}/%{name}
+%{__install} -p -D -m 0755 %{name} %{buildroot}%{consul_template_bindir}/%{name}
 
 ## symlink to /usr/local/bin
 %{__install} -d -m 0755 %{buildroot}/usr/local/bin
-%{__ln_s} %{consul_bindir}/%{name} %{buildroot}/usr/local/bin/%{name}
+%{__ln_s} %{consul_template_bindir}/%{name} %{buildroot}/usr/local/bin/%{name}
 
 %pre
-## add required user and group if needed
-getent group %{consul_group} >/dev/null || \
-  groupadd -r %{consul_group}
-getent passwd %{consul_user} >/dev/null || \
-  useradd -r -g %{consul_user} -d %{consul_home} \
-  -s /sbin/nologin -c %{name} %{consul_user}
-exit 0
 
 %post
 %systemd_post %{name}.service
@@ -78,9 +69,8 @@ exit 0
 %files
 %defattr(-,root,root,-)
 %{_unitdir}/%{name}.service
-%{consul_bindir}/%{name}
-%attr(-,%{consul_user},%{consul_group}) %dir %{consul_datadir}
-/usr/local/bin/consul
-%{consul_confdir}
+%{consul_template_bindir}/%{name}
+/usr/local/bin/%{name}
+%{consul_template_confdir}
 
 %changelog

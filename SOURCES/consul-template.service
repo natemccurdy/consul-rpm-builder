@@ -1,0 +1,14 @@
+[Unit]
+Description=Consul Template provides a convenient way to populate values from Consul into the filesystem.
+Documentation=http://www.consul.io
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/consul-template -config /etc/consul-template
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
