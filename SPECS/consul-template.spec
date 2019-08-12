@@ -5,7 +5,7 @@
 %define debug_package  %{nil}
 
 Name:           consul-template
-Version:        0.20.0
+Version:        0.21.0
 Release:        0%{?dist}
 Summary:        Consul Template provides a convenient way to populate values from Consul into the filesystem.
 
