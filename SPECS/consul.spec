@@ -8,7 +8,7 @@
 %define debug_package  %{nil}
 
 Name:           consul
-Version:        1.5.1
+Version:        1.7.3
 Release:        0%{?dist}
 Summary:        Service discovery and configuration made easy.
 

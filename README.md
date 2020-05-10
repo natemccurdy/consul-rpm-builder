@@ -2,8 +2,8 @@
 
 Want a Consul RPM for CentOS? Great, that's what this project will give you!
 
-The spec files in this project can generate:
-* consul 1.5.1
+The spec files in this project build RPM's for:
+* consul 1.7.3
 * consul-template 0.23.0
 
 # Building
