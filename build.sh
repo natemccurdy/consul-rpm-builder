@@ -5,7 +5,6 @@ set -ex
 : "${BUILDDIR:=.}"    # Use CWD as the default build dir
 : "${SOURCE:?}"       # SOURCE must be set via environment variables.
 : "${SPEC_FILE:=all}" # Which spec file to process. Will do all specs if unset.
-: "${HASHI_PUB_KEY_ID:=51852D87348FFC4C}"
 
 # Create the build folders.
 mkdir -p ${BUILDDIR}/{SPECS,SOURCES,RPMS,SRPMS}
@@ -20,9 +19,8 @@ fi
 # Link the sources.
 ln -sf "${SOURCE}"/SOURCES/* "${BUILDDIR}/SOURCES"
 
-# Get the Hashicorp public signing key
-# https://www.hashicorp.com/security
-gpg --keyserver hkp://keys.gnupg.net --recv-keys "$HASHI_PUB_KEY_ID"
+# Import the HashiCorp public key
+gpg --import "${SOURCE}/SOURCES/hashicorp.asc"
 
 # Download any Source's mentioned in the specs.
 for spec in "${BUILDDIR}"/SPECS/*.spec; do

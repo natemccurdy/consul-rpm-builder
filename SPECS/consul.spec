@@ -19,8 +19,9 @@ URL:            http://www.consul.io
 Source0:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
 Source1:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_SHA256SUMS
 Source2:        https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_SHA256SUMS.sig
+Source3:        hashicorp.asc
 
-Source3:        %{name}.service
+Source4:        %{name}.service
 
 BuildRequires:  systemd-units
 
